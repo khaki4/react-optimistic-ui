@@ -19,17 +19,37 @@ class App extends Component {
   };
 
   deleteItem = id => {
+    // 1) Immediately indicate lodaing
     this.setState({loading: true});
     deleteItemRequest(id)
       .then(() => {
         this.setState(state => ({
+          // 2) Update state
           items: state.items.filter(item => item.id !== id),
+          // stop loading
           loading: false,
         }));
       })
       .catch(() => this.setState({
         error: `Request failed for item ${id}`,
         loading: false,
+      }))
+  };
+
+  deleteItemOpticistic = (id) => {
+    // Snapshot our state
+    const originalItems = this.state.items;
+
+    // 1) Assume scuess. Immediately update state
+    this.setState(state => ({
+      items: state.items.filter(item => item.id !== id),
+    }));
+
+    // 2b) If the request failed revert state and display error.
+    deleteItemRequest(id)
+      .catch(() => this.setState({
+        items: originalItems,
+        error: `Reqeust failed for item ${id}`,
       }))
   };
 
@@ -42,7 +62,7 @@ class App extends Component {
           {items.map(item => (
             <li key={item.id}>
               {item.title}
-              <button onClick={() => this.deleteItem(item.id)}>
+              <button onClick={() => this.deleteItemOpticistic(item.id)}>
                 Delete item
               </button>
             </li>
