@@ -1,10 +1,10 @@
 import React, {Component} from 'react';
 
+// Fake request. Fail for id 3
+
 function deleteItemRequest(id) {
   return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      resolve();
-    }, 750);
+    setTimeout(id === 3 ? reject : resolve, 750);
   })
 }
 
@@ -27,10 +27,14 @@ class App extends Component {
           loading: false,
         }));
       })
+      .catch(() => this.setState({
+        error: `Request failed for item ${id}`,
+        loading: false,
+      }))
   };
 
   render() {
-    const {items, loading} = this.state;
+    const {items, loading, error} = this.state;
     return (
       <div>
         <h4>Async UI updates in React using setState()</h4>
@@ -44,6 +48,7 @@ class App extends Component {
             </li>
           ))}
         </ul>
+        {error && <p>{error}</p>}
       </div>
     );
   }
