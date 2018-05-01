@@ -63,6 +63,7 @@ class App extends React.Component {
       })
       .catch(() => {
         console.log(`catch: ${tweetId}`);
+        this.setState(setTweetLiked(tweetId, isLiked));
       })
   };
 
