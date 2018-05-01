@@ -41,6 +41,12 @@ class App extends React.Component {
       const isLiked = state.likedTweets.includes(tweetId);
 
       return {
+        tweets: state.tweets.map(
+          tweet =>
+            tweet.id === tweetId
+              ? {...tweet, likes: tweet.likes + (isLiked ? -1 : 1)}
+              : tweet
+        ),
         likedTweets: isLiked
           ? state.likedTweets.filter(id => id !== tweetId)
           : [...state.likedTweets, tweetId],
