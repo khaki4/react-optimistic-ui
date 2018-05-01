@@ -32,6 +32,30 @@ const initialState = {
 class App extends React.Component {
   state = initialState;
 
+  onClickLike = tweetId => {
+    console.log(`Clicked like: ${tweetId}`);
+
+    console.log(`update state: ${tweetId}`);
+
+    this.setState(state => {
+      const isLiked = state.likedTweets.includes(tweetId);
+
+      return {
+        likedTweets: isLiked
+          ? state.likedTweets.filter(id => id !== tweetId)
+          : [...state.likedTweets, tweetId],
+      }
+    })
+
+    likeTweetRequest(tweetId, true)
+      .then(() => {
+        console.log(`then: ${tweetId}`);
+      })
+      .catch(() => {
+        console.log(`catch: ${tweetId}`);
+      })
+  };
+
   render() {
     const {tweets, likedTweets} = this.state;
     return (
@@ -45,7 +69,7 @@ class App extends React.Component {
               key={tweet.id}
               tweet={tweet}
               isLiked={likedTweets.includes(tweet.id)}
-              onClickLike={tweetId => likeTweetRequest(tweetId, true)}
+              onClickLike={this.onClickLike}
             />
           ))}
         </div>
