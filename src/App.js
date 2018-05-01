@@ -19,20 +19,22 @@ class App extends Component {
   };
 
   deleteItem = id => {
+    this.setState({loading: true});
     deleteItemRequest(id)
       .then(() => {
         this.setState(state => ({
           items: state.items.filter(item => item.id !== id),
+          loading: false,
         }));
       })
   };
 
   render() {
-    const {items} = this.state;
+    const {items, loading} = this.state;
     return (
       <div>
         <h4>Async UI updates in React using setState()</h4>
-        <ul>
+        <ul style={{opacity: loading ? 0.6 : 1}}>
           {items.map(item => (
             <li key={item.id}>
               {item.title}
