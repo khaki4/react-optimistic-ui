@@ -37,8 +37,8 @@ class App extends Component {
   };
 
   deleteItemOpticistic = (id) => {
-    // Snapshot our state
-    const originalItems = this.state.items;
+    // 1) Snapshot target item so we can restore it in the case of failure
+    const deletingItem = this.state.items.find(item => item.id === id);
 
     // 1) Assume scuess. Immediately update state
     this.setState(state => ({
@@ -47,10 +47,12 @@ class App extends Component {
 
     // 2b) If the request failed revert state and display error.
     deleteItemRequest(id)
-      .catch(() => this.setState({
-        items: originalItems,
+      .catch(() => this.setState((state => ({
+        // Restore the single, deleted item.
+        // Use sort to ensure it is inserted where expected.
+        items: [...state.items, deletingItem].sort((a, b) => a.id - b.id),
         error: `Reqeust failed for item ${id}`,
-      }))
+      }))));
   };
 
   render() {
